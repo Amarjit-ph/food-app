@@ -3,10 +3,12 @@ import yelp from '../api/yelp'
 
 export default () => {
 
-    const [results, setResults] = useState([]);
-    const [errorMessage, setErrorMessage] = useState('');
 
-    const searchApi = async () => {
+    const [term, setTerm] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [results, setResults] = useState([]);
+
+    const searchApi = async (term) => {
         try {
             const response = await yelp.get('/search', {
                 params: {
@@ -20,6 +22,7 @@ export default () => {
 
         } catch (err) {
             setErrorMessage('NETWORK ERROR');
+            console.log('API ERROR');
         }
     }
 
@@ -27,11 +30,13 @@ export default () => {
     BAD CODE - Lead to Infinite-Loop Search 
     searchApi('pasta');
     
-
     /* GOOD CODE THAT RUN ONLY ON TIME */
     useEffect(() => {
         searchApi('Pasta');
     }, []);
 
+
+
     return [searchApi, results, errorMessage];
+
 };

@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import SearchBar from '../components/SearchBar'
-import useResults from '../hooks/useResults'
+import { StyleSheet, Text, View, ScrollView } from 'react-native'
+
 import yelp from '../api/yelp'
+import SearchBar from '../components/SearchBar'
+import ResultList from '../components/ResultList'
 
 const SearchScreen = () => {
 
     const [term, setTerm] = useState('');
-    const [results, setResults] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
+    const [results, setResults] = useState([]);
 
-
-    const searchApi = async () => {
+    const searchApi = async (term) => {
         try {
             const response = await yelp.get('/search', {
                 params: {
@@ -25,31 +25,57 @@ const SearchScreen = () => {
 
         } catch (err) {
             setErrorMessage('NETWORK ERROR');
+            console.log('API ERROR');
         }
     }
 
+
+    // ONE TIME RUN
     /*   
     BAD CODE - Lead to Infinite-Loop Search 
     searchApi('pasta');
     
-
     /* GOOD CODE THAT RUN ONLY ON TIME */
     useEffect(() => {
         searchApi('Pasta');
     }, []);
 
 
+
+    //FILTER FUNCTION
+    const FilterResultsByPrice = (price) => {
+        // price $ ,$$ ,$$$
+        return results.filter(result => {
+            return result.price == price;
+        })
+    };
+
     return (
-        <View>
+        <>
             <SearchBar
                 term={term}
                 onTermChange={newTerm => setTerm(newTerm)}
-                onTermSubmit={searchApi}
+                onTermSubmit={() => searchApi(term)}
             />
             {errorMessage ? <View style={styles.Error_message_view}><Text style={styles.Error_message}>{errorMessage}</Text></View> : null}
             <View style={styles.Result_message_view}><Text style={styles.Result_message}> We have Found {results.length} Results</Text></View>
 
-        </View>
+            <ScrollView>
+                <ResultList
+                    results={FilterResultsByPrice('$')}
+                    title="Cost Effective" />
+                <ResultList
+                    results={FilterResultsByPrice('$$')}
+                    title="Bit Pricier" />
+                <ResultList
+                    results={FilterResultsByPrice('$$$')}
+                    title="Big Spender" />
+                <ResultList
+                    results={FilterResultsByPrice('$$')}
+                    title="Bit Pricier" />
+            </ScrollView>
+
+        </>
     )
 }
 
