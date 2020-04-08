@@ -37,7 +37,7 @@ const SearchScreen = () => {
     
     /* GOOD CODE THAT RUN ONLY ON TIME */
     useEffect(() => {
-        searchApi('Pasta');
+        searchApi('Italian');
     }, []);
 
 
@@ -58,7 +58,6 @@ const SearchScreen = () => {
                 onTermSubmit={() => searchApi(term)}
             />
             {errorMessage ? <View style={styles.Error_message_view}><Text style={styles.Error_message}>{errorMessage}</Text></View> : null}
-            <View style={styles.Result_message_view}><Text style={styles.Result_message}> We have Found {results.length} Results</Text></View>
 
             <ScrollView>
                 <ResultList
@@ -96,18 +95,5 @@ const styles = StyleSheet.create({
     Error_message: {
         alignSelf: 'center',
         color: 'red'
-    },
-    Result_message_view: {
-        color: 'green',
-        fontSize: 15,
-        margin: 15,
-        borderWidth: 2,
-        borderColor: 'green',
-        borderRadius: 5,
-        alignSelf: 'stretch',
-    },
-    Result_message: {
-        alignSelf: 'center',
-        color: 'green'
-    },
+    }
 });
